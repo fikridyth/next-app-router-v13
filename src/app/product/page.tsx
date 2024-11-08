@@ -1,17 +1,25 @@
-import { getData } from "@/services/products";
+"use client";
+
+// import { getData } from "@/services/products";
 import Image from "next/image";
 import Link from "next/link";
+import useSWR from "swr";
 
 type DetailProductPageProps = { params: { slug: string } };
 
-export default async function DetailProductPage(props: DetailProductPageProps) {
+const fetcher = (url: string) => fetch(url).then((res) => res.json());
+
+export default function DetailProductPage(props: DetailProductPageProps) {
   const { params } = props;
-  const products = await getData("http://localhost:3000/api/product");
+  // const products = await getData(`${process.env.NEXTAUTH_URL}/api/product`);
+  const { data } = useSWR(`/api/product`, fetcher);
+  const products = data?.data ? { data: data.data } : { data: [] };
+
   return (
     <div className="grid grid-cols-4 mt-5 place-items-center">
       {/* <h1>{params.slug ? "Detail Product Page" : "Product Page"}</h1> */}
-      {products.data.length > 0 &&
-        products.data.map((product: any) => (
+      {products.data?.length > 0 &&
+        products.data?.map((product: any) => (
           <Link
             href={`product/detail/${product.id}`}
             key={product.id}
@@ -23,7 +31,7 @@ export default async function DetailProductPage(props: DetailProductPageProps) {
               alt="product image"
               width={500}
               height={500}
-              loading="lazy" //hanya load image yang terlihat di layar
+              priority
             />
             <div className="px-5 pb-5">
               <h5 className="text-xl font-semibold tracking-tight text-gray-900 dark:text-white truncate">

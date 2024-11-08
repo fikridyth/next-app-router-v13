@@ -34,6 +34,9 @@ export default function RootLayout({
   const pathname = usePathname();
   return (
     <html lang="en">
+      {/* <head>
+        <title>My App</title>
+      </head> */}
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
